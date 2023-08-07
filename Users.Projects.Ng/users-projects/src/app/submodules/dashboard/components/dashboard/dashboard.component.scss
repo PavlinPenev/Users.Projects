@@ -1,0 +1,105 @@
+.title {
+    height: 60px;
+    font-size: large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px solid rbga(0, 0, 0, 0.3);
+    box-shadow: 1px 1px 1px 1px #888888;
+}
+
+.spinner-wrapper{
+    position: absolute;
+    height: 38%;
+    width: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    mat-spinner {
+        position: sticky;
+    }
+}
+
+.main-wrapper {
+    display: flex;
+    height: 90%;
+    justify-content: center;
+}
+
+.table-wrapper, .chart-wrapper {
+    width: 50%;
+}
+
+.table-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px;
+}
+
+.dateAdded-header-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+
+    .form, mat-form-field {
+        width: inherit;
+    }
+
+    .search-icon {
+        margin-left: 10px;
+        
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+.refresh-wrapper {
+    display: flex;
+    justify-content: start;
+
+    margin-left: 25px;
+    width: 100%;
+}
+
+.mat-column-dateAdded {
+    min-width: 251px;
+}
+
+.mat-column-firstName, .mat-column-lastName {
+    max-width: 130px;
+}
+
+.mat-column-email {
+    min-width: 260px;
+}
+
+.button-filter-date {
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: none !important;
+}
+
+.chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.inner-chart-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+mat-divider {
+    margin-top: 50px;
+}

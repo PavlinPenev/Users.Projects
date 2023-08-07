@@ -1,0 +1,132 @@
+<div class="title">
+    {{constants.DASHBOARD}}
+</div>
+
+<div class="main-wrapper">
+    <div class="table-wrapper">
+        <div *ngIf="areUsersLoading" class="spinner-wrapper">
+            <mat-spinner diameter="100" color="accent"></mat-spinner>
+        </div>
+        <div class="search-field-wrapper">
+            <mat-form-field appearance="outline">
+                <input style="font-size: 12px;" matInput [formControl]="searchFormControl" (keyup)="onKeyUp()" [placeholder]="constants.SEARCH_BY_NAME">
+            </mat-form-field>
+        </div>
+        <mat-table
+        class="table"
+        matSort
+        (matSortChange)="onSortChange($event)"
+        [matSortActive]="'orderNumber'"
+        [matSortDirection]="'asc'"
+        [matSortDisableClear]="true"
+        [dataSource]="dataSource">
+            <!-- First Name -->
+            <ng-container [matColumnDef]="'firstName'">
+                <mat-header-cell *matHeaderCellDef>
+                    <div class="firstName-header-cell">
+                        <div [arrowPosition]="'before'" mat-sort-header>{{constants.FIRST_NAME}}</div>
+                    </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let user">{{user.firstName}}</mat-cell>
+            </ng-container>
+
+            <!-- Last Name -->
+            <ng-container [matColumnDef]="'lastName'">
+                <mat-header-cell *matHeaderCellDef>
+                    <div class="lastName-header-cell">
+                        <div [arrowPosition]="'before'" mat-sort-header>{{constants.LAST_NAME}}</div>
+                    </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let user">{{user.lastName}}</mat-cell>
+            </ng-container>
+
+            <!-- Email -->
+            <ng-container [matColumnDef]="'email'">
+                <mat-header-cell *matHeaderCellDef>
+                    <div class="email-header-cell">
+                        <div [arrowPosition]="'before'" mat-sort-header>{{constants.EMAIL}}</div>
+                    </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let user">{{user.email}}</mat-cell>
+            </ng-container>
+
+            <!-- Date Added -->
+            <ng-container [matColumnDef]="'dateAdded'">
+                <mat-header-cell *matHeaderCellDef class="date-header">
+                    <div class="dateAdded-header-cell">
+                        <div [arrowPosition]="'before'" mat-sort-header>{{constants.DATE_ADDED}}</div>
+                        <form [formGroup]="dateRangeFormControl" class="form">
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{constants.PICK_DATE_RANGE}}</mat-label>
+                                <mat-date-range-input [rangePicker]="dateRangePicker">
+                                  <input matStartDate formControlName="start" placeholder="Date Added From">
+                                  <input matEndDate formControlName="end" placeholder="Date Added To">
+                                </mat-date-range-input>
+                                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                                <mat-datepicker-toggle matSuffix [for]="dateRangePicker" ></mat-datepicker-toggle>
+                                <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+                                <button matPrefix mat-mini-fab class="button-filter-date" color="primary">
+                                    <mat-icon (click)="filterByDate()" class="search-icon" color="primary">search</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </form>
+                    </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let user">{{user.dateAdded | date}}</mat-cell>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container [matColumnDef]="'actions'">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let user">
+                    <div class="actions-buttons-wrapper">
+                        <button mat-stroked-button (click)="getUserById(user.id)">
+                            <mat-icon>compare_arrows</mat-icon>
+                            <span>{{constants.COMPARE}}</span>
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <div *ngIf="users.items.length === 0" class="empty-state">
+            {{constants.NO_USERS_FOUND}}
+        </div>
+        <mat-paginator #paginator (page)="pageChanged()" [length]="users ? users.totalItemsCount : 0" [pageSize]="10" showFirstLastButtons></mat-paginator>
+        <div class="refresh-wrapper">
+            <button mat-raised-button (click)="refreshData()" color="primary">{{constants.REFRESH_DATA}}</button>
+        </div>
+    </div>
+    <mat-divider vertical></mat-divider>
+    <div class="chart-wrapper">
+        <div>
+            <label id="radio-group-label">{{constants.PICK_CHART_ROW_TYPE}}</label>
+            <mat-radio-group
+                aria-labelledby="radio-group-label"
+                [(ngModel)]="chartSelectionEnum"
+                (change)="loadChartData()">
+                <mat-radio-button [checked]="true" [value]="ChartRowTypeEnum.Users">{{constants.USERS}}</mat-radio-button>
+                <mat-radio-button [value]="ChartRowTypeEnum.Projects">{{constants.PROJECTS}}</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div class="inner-chart-wrapper">
+            <div *ngIf="areChartProjectsLoading && areChartUsersLoading" class="spinner-wrapper">
+                <mat-spinner diameter="100" color="accent"></mat-spinner>
+            </div>
+            <google-chart 
+            #chart
+            [type]="googleChartConfig.type"
+            [data]="chartData"
+            [columns]="googleChartConfig.columns"
+            [options]="chartOptions"
+            [height]="600"
+            [width]="400">
+            </google-chart>
+        </div>
+        <div class="remove-compare-button-wrapper">
+            <button [disabled]="chartUsers.length === 10" mat-raised-button color="warn" (click)="removeCompare()">{{constants.REMOVE_COMPARE_DATA}}</button>
+        </div>
+    </div>
+</div>
+
